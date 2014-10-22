@@ -7,5 +7,5 @@ Integration of SCons build system for arduino-due
 
 Requirements
 ============
-Python2 + SCons
-ruby (test generation)
+* Python2 + SCons
+* ruby (test generation)
