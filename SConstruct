@@ -30,7 +30,7 @@ env.Replace(
 )
 
 obj_unity = env.Object('build_src/unity.o', 'unity.c')
-obj_src = SConscript('src/SConscript', variant_dir=SRCBUILDDIR, duplicate=0,
+obj_src = SConscript('src/SConscriptHOST', variant_dir=SRCBUILDDIR, duplicate=0,
                      exports='env')
 test_runners = SConscript('test/SConscript', variant_dir=TESTBUILDDIR,
                           duplicate=0, exports=['env', 'obj_src', 'obj_unity'])

@@ -1,0 +1,75 @@
+# -*- coding: utf-8 -*-
+# vim: set filetype=python : #
+import os
+Import('env')
+
+
+ccrule = '$CC -c $CFLAGS $CCFLAGS $_CPPINCFLAGS $_CCCOMCOM $SOURCE -o $TARGET'
+cxxrule = '$CXX -c $CFLAGS $CCFLAGS $CXXFLAGS $_CPPINCFLAGS $_CCCOMCOM $SOURCE -o $TARGET'
+elfrule = '$CC $ELFFLAGS'
+objrule = '$OBJCOPY $OBJCOPYFLAGS $SOURCE $TARGET'
+bossacrule = '$BOSSAC $BOSSACFLAGS $SOURCE -R'
+
+# TODO should be implemented using glob
+core_c_files = ['wiring.c', 'syscalls_sam3.c', 'hooks.c', 'WInterrupts.c',
+                'itoa.c', 'avr/dtostrf.c', 'wiring_shift.c',
+                'iar_calls_sam3.c', 'cortex_handlers.c', 'wiring_analog.c',
+                'wiring_digital.c']
+core_cxx_files = ['Stream.cpp', 'USARTClass.cpp', 'IPAddress.cpp', 'Print.cpp',
+                  'abi.cpp', 'wiring_pulse.cpp', 'WMath.cpp', 'Reset.cpp',
+                  'RingBuffer.cpp', 'new.cpp',  'USB/USBCore.cpp',
+                  'USB/CDC.cpp', 'USB/HID.cpp', 'main.cpp', 'WString.cpp',
+                  'UARTClass.cpp']
+variant_src = 'variant.cpp'
+main_file = 'Blink.cpp'
+core_file = 'core.a'
+
+elf_builder = Builder(action = elfrule,
+              suffix = '.elf',
+              src_suffix = '.o')
+
+bin_builder = Builder(action = objrule,
+                      suffix='.bin',
+                      src_suffix='.elf')
+ccenv = env.Clone(
+    CCCOM=ccrule,
+)
+ccenv.Append(BUILDERS={'ELF': elf_builder, 'BIN': bin_builder})
+
+cxxenv = env.Clone(
+    CXXCOM=cxxrule,
+)
+
+# Main files
+obj_core_cc = ccenv.Object(core_c_files)
+obj_core_cxx = cxxenv.Object(core_cxx_files)
+main_cxx = cxxenv.Object(main_file)
+variant = cxxenv.Object(variant_src)
+
+core = ccenv.StaticLibrary(core_file, [obj_core_cc, obj_core_cxx])
+main_elf = ccenv.ELF('Blink.elf', main_cxx)
+main_bin = ccenv.BIN('Blink.bin', main_elf)
+
+Depends(main_bin, main_elf)
+Depends(main_elf, [core, variant])
+Depends(core, [core_c_files, core_cxx_files])
+Depends(variant, core)
+# ccenv.AlwaysBuild(command_upload)
+env.AlwaysBuild(env.Alias('compile', main_elf))
+
+stty_refresh = ccenv.AlwaysBuild(ccenv.Alias(
+    'stty_refresh',[] ,'stty -F /dev/$ARDUINOPORT cs8 1200 hupcl'))
+
+env.AlwaysBuild(env.Alias('upload', [main_bin, stty_refresh], bossacrule))
+
+def PhonyTargets(env = None, **kw):
+    if not env: env = DefaultEnvironment()
+    for target,action in kw.items():
+        env.AlwaysBuild(env.Alias(target, [], action))
+
+PhonyTargets(TAGS = 'tools/mktags.sh -e')
+
+env = Environment(parse_flags = '-std=c89 -DFOO -lm')
+PhonyTargets(env, CFLAGS  = '@echo $CFLAGS',
+                  DEFINES = '@echo $CPPDEFINES',
+                  LIBS    = '@echo $LIBS')
