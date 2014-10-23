@@ -9,6 +9,7 @@ AR_DIR = '/home/karolis/programs/arduino-1.5.8/hardware/'
 # Build env
 SRC_BUILD_DIR = 'build_src'
 TEST_BUILD_DIR = 'build_test'
+TEST_SRC_BUILD_DIR = 'build_src_test'
 
 # Should not be modified currently
 VARIANT_SRC = os.path.join(AR_DIR, 'arduino/sam/variants/arduino_due_x')
@@ -27,7 +28,7 @@ LIB_CMSIS = os.path.join(INC_DIR, 'system/CMSIS/CMSIS/Include')
 LIB_ATMEL = os.path.join(INC_DIR, 'system/CMSIS/Device/ATMEL')
 LIB_ARDUINO = os.path.join(INC_DIR, 'cores/arduino')
 LIB_ARDUINO_DUE = os.path.join(INC_DIR, 'variants/arduino_due_x')
-incs = [LIB_SAM, LIB_CMSIS, LIB_ATMEL, LIB_ARDUINO, LIB_ARDUINO_DUE]
+incs = [LIB_SAM, LIB_CMSIS, LIB_ATMEL, LIB_ARDUINO, LIB_ARDUINO_DUE, '#./include']
 
 
 CC = os.path.join(TOOLS, 'arm-none-eabi-gcc')

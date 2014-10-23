@@ -5,12 +5,13 @@ Import('env_target', 'core_variant_syscalls', 'MAIN_FILE')
 
 main = env_target.File(MAIN_FILE)
 obj_main = env_target.Object(main)
+obj_src = env_target.Object(Glob('*.c'))
 elf_target = env_target.File('{}.elf'.format(MAIN_FILE.split('.')[0]))
 bin_target = env_target.File('{}.bin'.format(MAIN_FILE.split('.')[0]))
 
 
 elf_main = env_target.Command(
-    elf_target, [obj_main, core_variant_syscalls], ('$CC $ELFFLAGS -Wl,-Map,${MAIN_FILE}.map -o $TARGET '
+    elf_target, [obj_main, obj_src, core_variant_syscalls], ('$CC $ELFFLAGS -Wl,-Map,${MAIN_FILE}.map -o $TARGET '
         '-Wl,--start-group $SOURCES $GCCRELDIR -Wl,--end-group'))
 
 # bin_builder = Builder(action = objrule,

@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 # vim: set filetype=python : #
-
 Import('env')
 src = env.Glob('*.c')
 obj_src = env.Object(src)

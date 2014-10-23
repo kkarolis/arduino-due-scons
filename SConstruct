@@ -64,9 +64,9 @@ stty_refresh = env_target.AlwaysBuild(env_target.Alias(
     'stty_refresh',[] ,'stty -F /dev/$ARDUINOPORT cs8 1200 hupcl'))
 env_target.AlwaysBuild(env_target.Alias('upload', [bin_main, stty_refresh], bossacrule))
 
-# obj_unity = env.Object('build_src/unity.o', 'unity.c')
-# obj_src = SConscript('src/SConscriptHOST', variant_dir=SRCBUILDDIR, duplicate=0,
-                     # exports='env')
-# test_runners = SConscript('test/SConscript', variant_dir=TESTBUILDDIR,
-                          # duplicate=0, exports=['env', 'obj_src', 'obj_unity'])
-# env.AlwaysBuild(env.Alias('test', test_runners, run_tests))
+obj_unity = env.Object('build_test/unity.o', 'unity.c')
+obj_src = SConscript('src/SConscriptHOST', variant_dir=TEST_SRC_BUILD_DIR, duplicate=0,
+                     exports='env')
+test_runners = SConscript('test/SConscript', variant_dir=TEST_BUILD_DIR,
+                          duplicate=0, exports=['env', 'obj_src', 'obj_unity'])
+env.AlwaysBuild(env.Alias('test', test_runners, run_tests))
