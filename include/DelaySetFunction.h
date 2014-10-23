@@ -15,4 +15,12 @@
  *
  * =====================================================================================
  */
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 int incrementDelay(int);
+
+#ifdef __cplusplus
+}
+#endif

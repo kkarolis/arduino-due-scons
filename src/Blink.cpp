@@ -17,9 +17,7 @@
  */
 #define ARDUINO_MAIN
 #include "Arduino.h"
-extern "C" {
 #include "DelaySetFunction.h"
-}
 
 /*
  * Cortex-M3 Systick IT handler
