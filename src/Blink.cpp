@@ -3,7 +3,7 @@
  *
  *       Filename:  Blink.cpp
  *
- *    Description:  New blinky
+ *    Description:  Blink LED with delay set by a simple function
  *
  *        Version:  1.0
  *        Created:  2014.10.07 07:43:15
@@ -17,6 +17,7 @@
  */
 #define ARDUINO_MAIN
 #include "Arduino.h"
+#include "DelaySetFunction.h"
 
 /*
  * Cortex-M3 Systick IT handler
@@ -42,9 +43,9 @@ void setup() {
 // the loop function runs over and over again forever
 void loop() {
   digitalWrite(13, HIGH);   // turn the LED on (HIGH is the voltage level)
-  delay(2000);              // wait for a second
+  delay(incrementDelay(500));              // wait for a second
   digitalWrite(13, LOW);    // turn the LED off by making the voltage LOW
-  delay(2000);              // wait for a second
+  delay(incrementDelay(500));              // wait for a second
 }
 /*
  * \brief Main entry point of Arduino application
