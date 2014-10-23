@@ -15,6 +15,10 @@ Current Goals
 =============
 Make a blink LED example with TDD + upload to board
 
+Future Goals
+=============
+* Add examples of more advanced Ceedling testing features
+* Add examples of more advanced Ceedling testing features
 
 Usage
 =====
