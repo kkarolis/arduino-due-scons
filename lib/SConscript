@@ -1,2 +1,26 @@
 # -*- coding: utf-8 -*-
 # vim: set filetype=python : #
+from itertools import izip
+Import('env_target')
+# TODO Remove hardcoding
+core_files = [
+    'wiring.c', 'hooks.c', 'WInterrupts.c', 'itoa.c',
+    'avr/dtostrf.c', 'wiring_shift.c', 'iar_calls_sam3.c', 'cortex_handlers.c',
+    'wiring_analog.c', 'wiring_digital.c', 'Stream.cpp', 'USARTClass.cpp',
+    'IPAddress.cpp', 'Print.cpp', 'abi.cpp', 'wiring_pulse.cpp', 'WMath.cpp',
+    'Reset.cpp', 'RingBuffer.cpp', 'new.cpp',  'USB/USBCore.cpp',
+    'USB/CDC.cpp', 'USB/HID.cpp', 'main.cpp', 'WString.cpp', 'UARTClass.cpp']
+variant_src = env_target.File('#./variant.cpp')
+variant_target = env_target.File('#./lib/variant.cpp.o')
+syscalls_src = env_target.File('#./syscalls_sam3.c')
+syscalls_target = env_target.File('#./lib/syscalls_sam3.c.o')
+
+
+# TODO remove lib hardcoding
+targets = [env_target.File("#./lib/{}.o".format(src_f)) for src_f in core_files]
+core_src = [env_target.File("#./{}".format(src_f)) for src_f in core_files]
+obj_src = [env_target.Object(target, source) for target, source in izip(targets, core_src)]
+obj_variant = env_target.Object(variant_target, variant_src)
+obj_syscalls = env_target.Object(syscalls_target, syscalls_src)
+core = env_target.StaticLibrary('core.a', obj_src)
+Return(['core', 'obj_variant', 'obj_syscalls'])
