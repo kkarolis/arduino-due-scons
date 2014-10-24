@@ -4,7 +4,8 @@ import os
 from itertools import izip
 from subprocess import call
 
-Import('env', 'obj_src', 'obj_unity')
+Import('env_test', 'obj_src', 'obj_unity')
+
 
 def runner_generator(env, src_runner):
     for runner in src_runner:
@@ -14,6 +15,7 @@ def runner_generator(env, src_runner):
             file_dir, "{}.c".format(str_runner.split('_')[0]))
         str_program = str_runner.split('.')[0]
         yield (str_program, runner, env.File(str_test_file))
+
 
 def build_function(target, source, env):
     script_dir = env['UNITYHELPDIR'].replace('#.', Dir('#').abspath)
@@ -28,13 +30,13 @@ bld = Builder(action = build_function,
               suffix = '_Runner.c',
               src_suffix = '.c'
               )
-env['BUILDERS']['Runner'] = bld
+env_test['BUILDERS']['Runner'] = bld
 test_sources = [source for source in Glob('*.c')
                if not (source.name).endswith('_Runner.c')]
-test_runner_sources = [env.File((source.name).replace('.c','_Runner.c'))
+test_runner_sources = [env_test.File((source.name).replace('.c','_Runner.c'))
                                 for source in test_sources]
-runners = env.Runner(target = test_runner_sources, source = test_sources)
-test_runners = [env.Program(
+runners = env_test.Runner(target = test_runner_sources, source = test_sources)
+test_runners = [env_test.Program(
     program, [runner, test_file, obj_unity, obj_src]) for
-    program, runner, test_file in runner_generator(env, runners)]
+    program, runner, test_file in runner_generator(env_test, runners)]
 Return('test_runners')
