@@ -3,7 +3,6 @@ import os
 from SCons.Script import *
 from config import *
 
-# Should not be modified currently
 VARIANT_SRC = os.path.join(AR_DIR, 'arduino/sam/variants/arduino_due_x')
 CORE_SRC = os.path.join(AR_DIR, 'arduino/sam/cores/arduino')
 TOOLS = os.path.join(AR_DIR, 'tools/gcc-arm-none-eabi-4.8.3-2014q1/bin')
@@ -11,8 +10,8 @@ FLASH = os.path.join(
     AR_DIR, 'arduino/sam/variants/arduino_due_x/linker_scripts/gcc/flash.ld')
 GCC_REL = os.path.join(
     AR_DIR, 'arduino/sam/variants/arduino_due_x/libsam_sam3x8e_gcc_rel.a')
-# Mount core repositories
 
+# Mount core repositories
 INC_DIR = os.path.join(AR_DIR, 'arduino/sam')
 LIB_SAM = os.path.join(INC_DIR, 'system/libsam')
 LIB_CMSIS = os.path.join(INC_DIR, 'system/CMSIS/CMSIS/Include')
@@ -29,6 +28,8 @@ OBJ_COPY = os.path.join(TOOLS, 'arm-none-eabi-objcopy')
 BOSSAC = os.path.join(AR_DIR, 'tools/bossac')
 
 
+bossacrule = '$BOSSAC $BOSSACFLAGS $SOURCE -R'
+stty_rule = 'stty -F /dev/$ARDUINOPORT cs8 1200 hupcl'
 
 # TODO Expose flags to config file
 FLAGS_CC = [
@@ -50,6 +51,7 @@ FLAGS_BOSSAC = [
     '-i', '--port=$ARDUINOPORT', '-U', 'false', '-e', '-w', '-v', '-b']
 FLAGS_OBJ_COPY = ['-O', 'binary']
 
+# Define main target environment
 env_target = Environment()
 Repository([CORE_SRC, VARIANT_SRC])
 env_target.Append(
@@ -57,10 +59,11 @@ env_target.Append(
     BOSSAC=BOSSAC,
     BOSSACFLAGS=FLAGS_BOSSAC,
     ARDUINOPORT=ARDUINO_PORT,
-    BUILD_MAP = os.path.join(SRC_BUILD_DIR, MAIN_FILE),
-    # MAIN_FILE='build_src/Blink',
+    BUILD_MAP=os.path.join(SRC_BUILD_DIR, MAIN_FILE),
     COREDIR='lib',
     MAIN_FILE=MAIN_FILE,
+    STTY_RULE=stty_rule,
+    BOSSAC_RULE=bossacrule,
 )
 env_target.Replace(
     AR=AR,

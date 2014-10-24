@@ -26,11 +26,10 @@ bin_main = SConscript('src/SConscriptTARGET', duplicate=0,
 env_target.AlwaysBuild(env_target.Alias('compile', bin_main))
 
 # Upload to board
-bossacrule = '$BOSSAC $BOSSACFLAGS $SOURCE -R'
 stty_refresh = env_target.AlwaysBuild(env_target.Alias(
-    'stty_refresh', [], 'stty -F /dev/$ARDUINOPORT cs8 1200 hupcl'))
+    'stty_refresh', [], env_target['STTY_RULE']))
 env_target.AlwaysBuild(env_target.Alias('upload', [bin_main, stty_refresh],
-                                        bossacrule))
+                                        env_target['BOSSAC_RULE']))
 
 # Test sources
 obj_unity = env_test.Object(os.path.join(TEST_BUILD_DIR, 'unity.o'), 'unity.c')
